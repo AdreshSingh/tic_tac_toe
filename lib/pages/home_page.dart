@@ -12,6 +12,7 @@ class _HomePageState extends State<HomePage> {
   String tictactoe = "";
   int turnCount = 0;
   bool user = false;
+  bool play = true;
 
   // variables to hold turn symbols
   final String firstUser = "0";
@@ -89,12 +90,13 @@ class _HomePageState extends State<HomePage> {
 
   // for handlling taps
   void _tapped(int row, int index) {
-    if (user) {
+    if (user && turnCount <= 9) {
       setState(() {
         if (gameSteps[row][index % 3] == "") {
           gameSteps[row][index % 3] = "0";
           user = !user;
           turnCount += 1;
+          _winner();
         }
       });
     } else {
@@ -103,15 +105,16 @@ class _HomePageState extends State<HomePage> {
           gameSteps[row][index % 3] = "x";
           user = !user;
           turnCount += 1;
+          _winner();
         }
       });
     }
 
-    _winner();
     debugPrint("$turnCount");
-    if (turnCount == 9 && winner != "") {
+    if (turnCount == 9 && winner == "" && play) {
       setState(() {
         _showDialog(context, false);
+        play = false;
       });
     }
   }
@@ -194,6 +197,7 @@ class _HomePageState extends State<HomePage> {
       plate[1] = "";
       plate[2] = "";
     }
+    play = true;
   }
 
   Future<void> _showDialog(BuildContext context, [bool draw = false]) {
@@ -202,15 +206,16 @@ class _HomePageState extends State<HomePage> {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: Text(draw ? "Congratulations" : "Draw"),
-          content:
-              Text(draw ? "🌟Winner of the Match🌟 ✨$winner" : "Match is draw"),
+          title: Text(!draw ? "Congratulations" : "Draw"),
+          content: Text(
+              !draw ? "🌟Winner of the Match🌟 ✨$winner" : "Match is draw"),
           actions: [
             TextButton(
               onPressed: () {
                 setState(() {
                   _clean();
                   turnCount = 0;
+                  Navigator.of(context).pop();
                 });
               },
               child: const Text("play again"),
