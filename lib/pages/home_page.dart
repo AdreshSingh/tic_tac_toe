@@ -80,6 +80,7 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               _clean();
               turnCount = 0;
+              winner = "";
             });
           },
           child: const Icon(Icons.refresh),
@@ -216,6 +217,7 @@ class _HomePageState extends State<HomePage> {
                   _clean();
                   turnCount = 0;
                   Navigator.of(context).pop();
+                  winner = "";
                 });
               },
               child: const Text("play again"),
